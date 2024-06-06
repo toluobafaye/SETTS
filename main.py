@@ -1,47 +1,50 @@
 class Account:
-    def __init__(self, balance=0):
-        self._balance = balance
+    def __init__(self, account_number, balance=0):
+        self.account_number = account_number
+        self.balance = balance
 
     def deposit(self, amount):
         if amount > 0:
-            self._balance += amount
+            self.balance += amount
+            return f"Deposited {amount}. New balance is {self.balance}."
         else:
-            print("Deposit amount must be positive.")
+            return "Deposit amount must be positive."
 
     def withdraw(self, amount):
-        if amount > 0 and amount <= self._balance:
-            self._balance -= amount
+        if amount > 0 and amount <= self.balance:
+            self.balance -= amount
+            return f"Withdrew {amount}. New balance is {self.balance}."
         else:
-            print("Invalid withdrawal amount.")
+            return "Invalid withdrawal amount."
 
     def get_balance(self):
-        return self._balance
-
-
+        return self.balance
 class SavingsAccount(Account):
-    def __init__(self, balance=0):
-        super().__init__(balance)
-        self._interest_rate = 0.005
-        self._withdrawal_limit = 700000
+    def __init__(self, account_number, balance=0):
+        super().__init__(account_number, balance)
+        self.interest_rate = 0.005  # 0.5%
+        self.withdrawal_limit = 700000
 
     def deposit(self, amount):
-        if amount > 0:
-            super().deposit(amount)
-            self._balance += amount * self._interest_rate
-        else:
-            print("Deposit amount must be positive.")
+        result = super().deposit(amount)
+        if "Deposited" in result:
+            interest = amount * self.interest_rate
+            self.balance += interest
+            return f"{result} Interest added: {interest}. New balance is {self.balance}."
+        return result
 
     def withdraw(self, amount):
-        if amount <= self._withdrawal_limit:
-            super().withdraw(amount)
-        else:
-            print(f"Cannot withdraw more than {self._withdrawal_limit}")
+        if amount > self.withdrawal_limit:
+            return f"Cannot withdraw more than {self.withdrawal_limit}."
+        return super().withdraw(amount)
 
+savings_account = SavingsAccount("SA12345", 10000)
 
-savings_account = SavingsAccount(10000)
-
-savings_account.deposit(5000)
-print("Savings Account Balance:", savings_account.get_balance())
-savings_account.withdraw(1000)
+print(savings_account.deposit(5000))
 print("Savings Account Balance:", savings_account.get_balance())
 
+print(savings_account.withdraw(1000))
+print("Savings Account Balance:", savings_account.get_balance())
+
+print(savings_account.withdraw(800000))
+print("Savings Account Balance:", savings_account.get_balance())
